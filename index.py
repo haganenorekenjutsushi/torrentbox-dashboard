@@ -7,6 +7,9 @@ import datetime
 import re
 import config
 
+ip = [(s.connect(('8.8.8.8', 80)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]
+serverHostname = config.serverHostname if config.serverHostname else ip
+
 print "Content-type: text/html"
 print 
 print """
@@ -261,7 +264,7 @@ $(document).ready(function () {
   "CPUUsage":  psutil.cpu_percent(interval=1), 
   "RAMUsage":psutil.virtual_memory().percent, 
   "RAMFree":psutil.virtual_memory().available/1024/1024, 
-  "ip":[(s.connect(('8.8.8.8', 80)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1],
+  "ip":serverHostname,
   "DiskUsage": psutil.disk_usage(config.diskUsagePath).percent,
   "DiskFree":  psutil.disk_usage(config.diskUsagePath).free/1024/1024/1024,
   "uptime":  re.sub('\.\d*$','',str(datetime.datetime.now() - datetime.datetime.fromtimestamp(psutil.boot_time())))
